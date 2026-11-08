@@ -25,13 +25,13 @@
     "vue": "3.5.44",
     "vue-router": "5.4.0",
     "zod": "4.6.7",
-    "h3": "1.15.11",
+    "h3": "2.0.8",
     "nitropack": "2.13.5"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
-    "@types/node": "24.19.2",
-    "typescript": "5.9.3",
+    "@types/node": "26.6.6",
+    "typescript": "7.0.2",
     "vitest": "5.0.5",
     "vue-tsc": "3.3.14"
   },

@@ -1,0 +1,15 @@
+node_modules/
+.nuxt/
+.output/
+data/
+.data/
+.test-data/
+test-results/
+playwright-report/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+.DS_Store

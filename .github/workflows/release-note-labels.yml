@@ -1,0 +1,41 @@
+name: Release note labels
+
+on:
+    pull_request_target:
+        types: [opened, edited, reopened]
+
+permissions:
+    issues: write
+    pull-requests: write
+
+jobs:
+    label:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Apply release note label
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  GH_REPO: ${{ github.repository }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  PR_TITLE: ${{ github.event.pull_request.title }}
+              run: |
+                  case "$PR_TITLE" in
+                    fix:*|fix!:*|fix\(*\):*|fix\(*\)!:*) LABEL="bug" ;;
+                    feat:*|feat!:*|feat\(*\):*|feat\(*\)!:*) LABEL="enhancement" ;;
+                    docs:*|docs!:*|docs\(*\):*|docs\(*\)!:*) LABEL="documentation" ;;
+                    chore\(deps\):*|chore\(deps\)!:*|chore\(deps-dev\):*|chore\(deps-dev\)!:*) LABEL="dependencies" ;;
+                    ci:*|ci!:*|ci\(*\):*|ci\(*\)!:*) LABEL="github_actions" ;;
+                    *) exit 0 ;;
+                  esac
+
+                  RELEASE_LABELS=(bug enhancement documentation dependencies github_actions)
+                  CURRENT_LABELS=$(gh pr view "$PR_NUMBER" --json labels --jq '.labels[].name')
+
+                  for CANDIDATE in "${RELEASE_LABELS[@]}"; do
+                    if [ "$CANDIDATE" != "$LABEL" ] && printf '%s\n' "$CURRENT_LABELS" | grep -Fxq "$CANDIDATE"; then
+                      gh pr edit "$PR_NUMBER" --remove-label "$CANDIDATE"
+                    fi
+                  done
+
+                  gh pr edit "$PR_NUMBER" --add-label "$LABEL"
